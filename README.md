@@ -2,6 +2,9 @@
 
 A lightweight, fast system information display tool written in Python, inspired by Neofetch.
 
+
+![Exemple](https://i.imgur.com/WKerPuj.png)
+
 ## Overview
 
 BasikFetch is a simple yet effective tool that displays key system information in your terminal with a minimal ASCII art logo. It's designed to be lightweight and fast, perfect for including in your `.bashrc` or `.zshrc` to display system information on terminal startup.
