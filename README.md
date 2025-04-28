@@ -28,6 +28,7 @@ BasikFetch is a simple yet effective tool that displays key system information i
 
 1. Clone this repository or download the script:
    ```
+   cd basikfetch
    git clone https://github.com/luvth/basikfetch.git
    ```
    
