@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+
+import os
+import platform
+import psutil
+import datetime
+import socket
+
+def get_system_info():
+    info = {}
+    info["user"] = f"{os.getlogin()}@{socket.gethostname()}"
+    
+    try:
+        with open('/etc/os-release', 'r') as f:
+            os_release = dict(line.strip().split('=', 1) for line in f if '=' in line)
+        pretty_name = os_release.get('PRETTY_NAME', '').strip('"')
+        if pretty_name:
+            info["os"] = pretty_name
+        else:
+            info["os"] = f"{platform.system()} {platform.release()}"
+    except:
+        info["os"] = f"{platform.system()} {platform.release()}"
+    
+    with open('/proc/version', 'r') as f:
+        kernel_parts = f.read().strip().split()
+    info["kernel"] = kernel_parts[2] if len(kernel_parts) >= 3 else platform.release()
+    
+    boot_time = datetime.datetime.fromtimestamp(psutil.boot_time())
+    uptime = datetime.datetime.now() - boot_time
+    days, seconds = uptime.days, uptime.seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    info["uptime"] = f"{days}d {hours}h {minutes}m"
+    
+    info["packages"] = str(len(os.listdir("/usr/bin")))
+    info["shell"] = os.environ.get("SHELL", "")
+    info["de"] = os.environ.get("XDG_CURRENT_DESKTOP", os.environ.get("DESKTOP_SESSION", "bspwm"))
+    return info
+
+def display_info(info):
+    lines = []
+    header = f"\033[1;34m{info['user']}\033[0m"
+    lines.append(header)
+    lines.append("-" * len(info['user']))
+    
+    for key, value in info.items():
+        if key != "user":
+            label = f"\033[1;34m{key.capitalize()}:\033[0m"
+            lines.append(f"{label} {value}")
+    
+    ascii_art = [
+        "          .          ",
+        "         / \\        ",
+        "        /   \\       ",
+        "       /^.   \\      ",
+        "      /  .-.  \\     ",
+        "     /  (   ) _\\    ",
+        "    / _.~   ~._^\\   ",
+        "   /.^         ^.\\  ",
+    ]
+    
+    while len(ascii_art) < len(lines):
+        ascii_art.append(" ")
+    
+    while len(lines) < len(ascii_art):
+        lines.append("")
+    
+    for i in range(len(lines)):
+        print(f"{ascii_art[i]} {lines[i]}")
+
+def main():
+    print()
+    info = get_system_info()
+    display_info(info)
+    print()
+
+if __name__ == "__main__":
+    main()
